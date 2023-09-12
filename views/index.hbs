@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <main>
+    <h2>PassKey Test</h2>
+    <button id="btn">test</button>
+  </main>
+</body>
+<script type="module">
+  function base642ab(base64) {
+    const str = window.atob(base64);
+    const len = str.length;
+    const bytes = new Uint16Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = str.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  function ab2base64(ab) {
+    const str = String.fromCharCode.apply(null, new Uint16Array(ab))
+    return window.btoa(str);
+  }
+
+  const PublicKeyCredentialCreationOptions = {
+    challenge: base642ab('Pj5VVSB2wIBmTU3NIiKg'),
+    rpId: "localhost",
+    userVerification: "required",
+    allowCredentials:[]
+  }
+
+  const credential = await navigator.credentials.get({
+    publicKey: PublicKeyCredentialCreationOptions
+  })
+
+  document.getElementById('#btn').addEventListener('click', function () {
+    alert('aaa')
+  })
+
+</script>
+</html>

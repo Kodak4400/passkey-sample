@@ -1,4 +1,4 @@
-import { Controller, Render, Get } from '@nestjs/common';
+import { Controller, Render, Get, Response } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -7,7 +7,8 @@ export class AppController {
 
   @Get('')
   @Render('index.hbs')
-  async index() {
-    return '';
+  async index(@Response() res) {
+    console.log(res.locals);
+    return res;
   }
 }

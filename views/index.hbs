@@ -8,12 +8,26 @@
 <body>
   <main>
     <h2>PassKey Test</h2>
-    <button id="btn">test</button>
+    <form id="form" method="POST" action="/auth/username" class="center">
+      <input id="csrf" type="hidden" name="_csrf" value={{csrfToken}}>
+      <label class="mdc-floating-label" id="username-label">username</label>
+      <input
+        type="text"
+        id="username"
+        class="mdc-text-field__input"
+        aria-labelledby="username-label"
+        name="username"
+        autocomplete="username webauthn"
+        autofocus />
+      <input id="passkey-signin" type="submit" class="mdc-button mdc-button--raised" value="Next" />
+    </form>
   </main>
 </body>
 <script type="module">
-  function base642ab(base64) {
-    const str = window.atob(base64);
+  const csrf = document.getElementById('csrf').value
+
+  function toBuffer(csrf) {
+    const str = window.atob(csrf);
     const len = str.length;
     const bytes = new Uint16Array(len);
     for (let i = 0; i < len; i++) {
@@ -22,24 +36,28 @@
     return bytes.buffer;
   }
 
-  function ab2base64(ab) {
+  function toCSRF(ab) {
     const str = String.fromCharCode.apply(null, new Uint16Array(ab))
     return window.btoa(str);
   }
 
   const PublicKeyCredentialCreationOptions = {
-    challenge: base642ab('Pj5VVSB2wIBmTU3NIiKg'),
+    challenge: toBuffer(csrf), // ArrayBuffer型
     rpId: "localhost",
     userVerification: "required",
-    allowCredentials:[]
   }
 
-  const credential = await navigator.credentials.get({
-    publicKey: PublicKeyCredentialCreationOptions
-  })
+  document.getElementById('passkey-signin').addEventListener('click', async s => {
+    s.preventDefault()
+    console.log(window.PublicKeyCredential)
 
-  document.getElementById('#btn').addEventListener('click', function () {
-    alert('aaa')
+    const cred = await navigator.credentials.get({
+      publicKey: PublicKeyCredentialCreationOptions,
+      mediation: 'conditional'
+    })
+
+    console.log(cred)
+
   })
 
 </script>
